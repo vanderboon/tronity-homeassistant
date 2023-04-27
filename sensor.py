@@ -28,6 +28,7 @@ from .const import (
     CONF_CLIENT_SECRET,
     CONF_VEHICLE_ID,
     CONF_DISPLAY_NAME,
+    KM_TO_MI,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -60,7 +61,9 @@ async def async_setup_entry(
     async_add_entities(
         [
             Odometer(hass, config_entry),
+            Odometer_m(hass, config_entry),
             Range(hass, config_entry),
+            Range_m(hass, config_entry),
             Level(hass, config_entry),
             Charging(hass, config_entry),
             Plugged(hass, config_entry),
@@ -130,6 +133,25 @@ class Odometer(SensorEntity):
         self._attr_native_value = data["odometer"]
 
 
+class Odometer_m(SensorEntity):
+    def __init__(self, hass: HomeAssistant, my_api: ConfigEntry) -> None:
+        self.coordinator = TronityCoordinator(
+            hass,
+            client_id=hass.data[DOMAIN][my_api.entry_id][CONF_CLIENT_ID],
+            client_secret=hass.data[DOMAIN][my_api.entry_id][CONF_CLIENT_SECRET],
+            vehicle_id=hass.data[DOMAIN][my_api.entry_id][CONF_VEHICLE_ID],
+        )
+        self._attr_name = (
+            f"tronity.{hass.data[DOMAIN][my_api.entry_id][CONF_DISPLAY_NAME]}.odometer_m"
+        )
+        self._attr_device_class = SensorDeviceClass.DISTANCE
+        self._attr_native_unit_of_measurement = "mi"
+        self._attr_native_value = 0
+
+    async def async_update(self) -> None:
+        data = await self.coordinator._async_update_data()
+        self._attr_native_value = round(data["odometer"]*KM_TO_MI)
+
 class Range(SensorEntity):
     def __init__(self, hass: HomeAssistant, my_api: ConfigEntry) -> None:
         self.coordinator = TronityCoordinator(
@@ -147,6 +169,23 @@ class Range(SensorEntity):
         data = await self.coordinator._async_update_data()
         self._attr_native_value = data["range"]
 
+
+class Range_m(SensorEntity):
+    def __init__(self, hass: HomeAssistant, my_api: ConfigEntry) -> None:
+        self.coordinator = TronityCoordinator(
+            hass,
+            client_id=hass.data[DOMAIN][my_api.entry_id][CONF_CLIENT_ID],
+            client_secret=hass.data[DOMAIN][my_api.entry_id][CONF_CLIENT_SECRET],
+            vehicle_id=hass.data[DOMAIN][my_api.entry_id][CONF_VEHICLE_ID],
+        )
+        self._attr_name = f"tronity.{hass.data[DOMAIN][my_api.entry_id][CONF_DISPLAY_NAME]}.remaining_range_m"
+        self._attr_device_class = SensorDeviceClass.DISTANCE
+        self._attr_native_unit_of_measurement = "mi"
+        self._attr_native_value = 0
+
+    async def async_update(self) -> None:
+        data = await self.coordinator._async_update_data()
+        self._attr_native_value = round(data["range"]*KM_TO_MI)
 
 class Level(SensorEntity):
     def __init__(self, hass: HomeAssistant, my_api: ConfigEntry) -> None:

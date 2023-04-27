@@ -7,5 +7,7 @@ CONF_VEHICLE_ID = "vehicle_id"
 CONF_BEARER_TOKEN = "bearer_token"
 CONF_DISPLAY_NAME = "display_name"
 
+KM_TO_MI = 0.6213712
+
 CONF_BASE_URL = "https://api.tronity.tech/authentication"
 CONF_VEHICLES_URL = "https://api.tronity.tech/tronity/vehicles/"
