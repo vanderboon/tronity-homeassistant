@@ -152,6 +152,7 @@ class Odometer_m(SensorEntity):
         data = await self.coordinator._async_update_data()
         self._attr_native_value = round(data["odometer"]*KM_TO_MI)
 
+
 class Range(SensorEntity):
     def __init__(self, hass: HomeAssistant, my_api: ConfigEntry) -> None:
         self.coordinator = TronityCoordinator(
@@ -186,6 +187,7 @@ class Range_m(SensorEntity):
     async def async_update(self) -> None:
         data = await self.coordinator._async_update_data()
         self._attr_native_value = round(data["range"]*KM_TO_MI)
+
 
 class Level(SensorEntity):
     def __init__(self, hass: HomeAssistant, my_api: ConfigEntry) -> None:
